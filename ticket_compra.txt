@@ -1,0 +1,12 @@
+----- Producto Comprado -----
+Producto: Disco de Vinilo
+Precio unitario: 20.0
+-----------------------------------------
+----- Productos en la cesta -----
+Producto: Disco de Vinilo
+Precio unitario: 20.0
+-----------------------------------------
+Producto: Mario Bros
+Precio unitario: 34.99
+-----------------------------------------
+Total: 164.97
