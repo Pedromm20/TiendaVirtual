@@ -11,11 +11,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
 import logic.Producto;
 
-/**
- * Clase para establecer la conexión con la base de datos MySQL.
- */
 public class Conexion {
 
     private static String nombreBD;
@@ -52,15 +50,10 @@ public class Conexion {
         return conexion;
     }
 
-    /**
-     * Carga los productos desde la base de datos.
-     *
-     * @return Una lista de productos cargados desde la base de datos.
-     */
     public List<Producto> cargarProductos() {
         List<Producto> productos = new ArrayList<>();
         try (Connection conexion = conectar()) {
-            String query = "SELECT * FROM Productos";
+            String query = "SELECT * FROM productos";
             try (PreparedStatement statement = conexion.prepareStatement(query);
                  ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
@@ -80,31 +73,12 @@ public class Conexion {
         return productos;
     }
 
-    /**
-     * Inserta un nuevo ticket de compra en la base de datos.
-     * @param totalCompra El total de la compra
-     */
-    public void insertarTicketCompra(double totalCompra) {
-        try (Connection conexion = conectar();
-             PreparedStatement stmt = conexion.prepareStatement("INSERT INTO ticketscompra (total) VALUES (?)", Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setDouble(1, totalCompra);
-            stmt.executeUpdate();
-            ResultSet rs = stmt.getGeneratedKeys();
-            if (rs.next()) {
-                int ticketId = rs.getInt(1);
-                System.out.println("Ticket ID: " + ticketId);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Error al insertar el ticket de compra: " + e.getMessage(), e);
-        }
-    }
-    public int crearCompra(double totalCompra) {
+    public int crearCompra(double totalCompra, String clienteEmail) {
         int compraId = -1;
         try (Connection conexion = conectar()) {
-            String query = "INSERT INTO compras (cliente_id, total) VALUES (?, ?)";
+            String query = "INSERT INTO compras (cliente_email, total) VALUES (?, ?)";
             try (PreparedStatement statement = conexion.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-                // Supongamos que el cliente tiene el ID 1, pero deberías establecer el ID del cliente real
-                statement.setInt(1, 1);
+                statement.setString(1, clienteEmail);
                 statement.setDouble(2, totalCompra);
                 int filasAfectadas = statement.executeUpdate();
                 if (filasAfectadas == 1) {
@@ -119,4 +93,74 @@ public class Conexion {
         }
         return compraId;
     }
-}
+
+
+   
+
+    public boolean verificarCredenciales(String correo, String clave) {
+        try (Connection conexion = conectar()) {
+            String query = "SELECT * FROM clientes WHERE email = ? AND clave = ?";
+            try (PreparedStatement statement = conexion.prepareStatement(query)) {
+                statement.setString(1, correo);
+                statement.setString(2, clave);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    return resultSet.next(); // Si hay al menos una fila, las credenciales son válidas
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false; // Si hay algún error, consideramos que las credenciales no son válidas
+        }
+    }
+
+
+    public void insertarDetalleCompra(int compraId, int productoId, int cantidad, double precioUnitario) {
+        try (Connection conexion = conectar();
+             PreparedStatement stmt = conexion.prepareStatement("INSERT INTO detallescompra (compra_id, producto_id, cantidad, precio_unitario) VALUES (?, ?, ?, ?)")) {
+            stmt.setInt(1, compraId);
+            stmt.setInt(2, productoId);
+            stmt.setInt(3, cantidad);
+            stmt.setDouble(4, precioUnitario);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al insertar el detalle de compra: " + e.getMessage(), e);
+        }
+    }
+
+    public void insertarTicketCompra(int compraId, double totalCompra) {
+        try (Connection conexion = conectar
+        		();
+                PreparedStatement stmt = conexion.prepareStatement("INSERT INTO ticketscompra (compra_id, total) VALUES (?, ?)")) {
+               stmt.setInt(1, compraId);
+               stmt.setDouble(2, totalCompra);
+               stmt.executeUpdate();
+           } catch (SQLException e) {
+               throw new RuntimeException("Error al insertar el ticket de compra: " + e.getMessage(), e);
+           }
+       }
+
+       public void insertarAlbaran(int compraId, double totalCompra) {
+           try (Connection conexion = conectar();
+                PreparedStatement stmt = conexion.prepareStatement("INSERT INTO albaran (compra_id, total) VALUES (?, ?)")) {
+               stmt.setInt(1, compraId);
+               stmt.setDouble(2, totalCompra);
+               stmt.executeUpdate();
+           } catch (SQLException e) {
+               throw new RuntimeException("Error al insertar el albarán: " + e.getMessage(), e);
+           }
+       }
+       public boolean clienteIdValido(int clienteId) {
+           try (Connection conexion = conectar();
+                PreparedStatement statement = conexion.prepareStatement("SELECT id FROM clientes WHERE id = ?")) {
+               statement.setInt(1, clienteId);
+               try (ResultSet resultSet = statement.executeQuery()) {
+                   return resultSet.next(); // Si hay al menos una fila, significa que el clienteId es válido
+               }
+           } catch (SQLException e) {
+               e.printStackTrace();
+               return false; // Si hay algún error, consideramos que el clienteId no es válido
+           }
+       }
+
+   }
+

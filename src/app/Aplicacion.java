@@ -1,47 +1,61 @@
+// Clase Aplicacion
 package app;
 
 import data.GestionProducto;
 import leer.Leer;
 import mensaje.Mensajes;
 import menu.Menu;
+import conexionMYSQL.Conexion;
 
 public class Aplicacion {
 
     public static void main(String[] args) {
-        Mensajes.mensajeInicial();
+        Mensajes.mensajeInicioSesion();
+        Mensajes.mensajeCorreo();
+        String correo = Leer.dato();
+        Mensajes.mensajeClave();
+        String clave = Leer.dato();
 
-        boolean continuar = true;
-        GestionProducto gestion = new GestionProducto();
-        gestion.cargarProductos();
+        Conexion conexion = new Conexion();
+        if (conexion.verificarCredenciales(correo, clave)) {
+            Mensajes.mensajeBienvenida();
 
-        do {
-            Menu.mostrarMenu();
+            
+            boolean continuar = true;
+            GestionProducto gestion = new GestionProducto(0);
+            gestion.cargarProductos();
 
-            switch (Leer.datoInt()) {
-                case 1:
-                    gestion.mostrarProductos();
-                    break;
-                case 2:
-                    gestion.comprarProductos();
-                    break;
-                case 3:
-                    gestion.verCesta();
-                    break;
-                case 4:
-                    double totalCompra = gestion.calcularTotalCompra();
-                    gestion.finalizarCompra(totalCompra);
-                    break;
-                case 5:
-                    continuar = false;
-                    break;
-                default:
-                    Mensajes.mensajeOpcionInvalida();
-                    break;
-            }
+            do {
+                Menu.mostrarMenu();
 
-        } while (continuar);
+                switch (Leer.datoInt()) {
+                    case 1:
+                        gestion.mostrarProductos();
+                        break;
+                    case 2:
+                        gestion.comprarProductos();
+                        break;
+                    case 3:
+                        gestion.verCesta();
+                        break;
+                    case 4:
+                        double totalCompra = gestion.calcularTotalCompra();
+                        gestion.finalizarCompra(totalCompra, correo);
+                        break;
+                    case 5:
+                        continuar = false;
+                        break;
+                    default:
+                        Mensajes.mensajeOpcionInvalida();
+                        break;
+                }
 
-        Mensajes.mensajeFin();
+            } while (continuar);
+
+            Mensajes.mensajeFin();
+        } else {
+            Mensajes.mensajeCredencialesInvalidas();
+        }
     }
 }
 

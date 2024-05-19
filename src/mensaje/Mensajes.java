@@ -89,7 +89,7 @@ public class Mensajes {
     }
 
     public static void mensajeIngreseTarjeta() {
-        mensaje("Ingrese el número de la tarjeta (sin espacios): ");
+        mensaje("Ingrese el número de la tarjeta: ");
     }
 
     public static void mensajeIngreseFechaExpiracion() {
@@ -122,5 +122,43 @@ public class Mensajes {
 		    System.out.println("ID de la compra: " + compraId);
 		}
 
-}
+		public static void mensajeCredencialesInvalidas() {
+            mensaje("Credenciales inválidas. Por favor, inténtelo de nuevo.");
+        }
 
+		public static void mensajeBienvenida() {
+            mensaje("¡Bienvenido a la tienda virtual!");
+        }
+
+		public static void mensajeInicioSesion() {
+            mensaje("Inicio de sesión:");
+            
+		}
+
+		public static void mensajeCorreo() {
+            mensaje("Correo electrónico:");
+        }
+
+		public static void mensajeClave() {
+            mensaje("Clave:");			
+		}
+
+		public static void mensajeInicioSesionFallido() {
+			mensaje("Inicio de sesión fallido. Por favor, inténtelo de nuevo.");
+        }
+
+		public static void mensajeInicioSesionExitoso() {
+            mensaje("Inicio de sesión exitoso.");
+        }
+
+		public static void mensajePagoExitoso() {
+            mensaje("Pago realizado con éxito.");			
+		}
+		
+			
+		
+		
+		
+		
+
+}
