@@ -1,4 +1,3 @@
-// Clase Aplicacion
 package app;
 
 import data.GestionProducto;
@@ -20,11 +19,10 @@ public class Aplicacion {
         if (conexion.verificarCredenciales(correo, clave)) {
             Mensajes.mensajeBienvenida();
 
-            
-            boolean continuar = true;
-            GestionProducto gestion = new GestionProducto(0);
+            GestionProducto gestion = new GestionProducto(0,conexion);
             gestion.cargarProductos();
 
+            boolean continuar = true;
             do {
                 Menu.mostrarMenu();
 
@@ -58,5 +56,4 @@ public class Aplicacion {
         }
     }
 }
-
 

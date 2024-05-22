@@ -4,10 +4,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
+
 import logic.Producto;
 import mensaje.Mensajes;
-import leer.Leer;
 import conexionMYSQL.Conexion;
+import leer.Leer;
 
 public class GestionProducto {
     private List<Producto> productos;
@@ -16,10 +17,11 @@ public class GestionProducto {
     private Conexion conexion;
     private int clienteId;
 
-    public GestionProducto(int clienteId) {
+    public GestionProducto(int clienteId, Conexion conexion) {
         this.clienteId = clienteId;
         this.conexion = new Conexion();
     }
+    
 
     // Getters y setters para clienteId
     public int getClienteId() {
@@ -28,6 +30,15 @@ public class GestionProducto {
 
     public void setClienteId(int clienteId) {
         this.clienteId = clienteId;
+    }
+
+    // Getters y setters para productos
+    public List<Producto> getProductos() {
+        return productos;
+    }
+
+    public void setProductos(List<Producto> productos) {
+        this.productos = productos;
     }
 
     public void mostrarProductos() {
